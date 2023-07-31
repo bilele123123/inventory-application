@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const MouseSchema = new Schema({
+const HeadphoneSchema = new Schema({
   brand: { type: String, required: true, maxlength: 100 },
   model: { type: String, required: true, maxlength: 100 },
   description: { type: String, required: true, maxlength: 500 },
@@ -10,8 +10,8 @@ const MouseSchema = new Schema({
   url: { type: String },
 });
 
-MouseSchema.virtual("url").get(function () {
-  return "/mouse/" + this._id; 
+HeadphoneSchema.virtual("url").get(function () {
+  return "/headphone/" + this._id; 
 });
 
-module.exports = mongoose.model("Mouse", MouseSchema);
+module.exports = mongoose.model("Headphone", HeadphoneSchema);
