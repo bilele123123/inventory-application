@@ -10,8 +10,8 @@ const LaptopSchema = new Schema({
   url: { type: String },
 });
 
-LaptopSchema.virtual("url").get(function () {
-  return "/laptop/" + this._id;
+LaptopSchema.virtual("laptopUrl").get(function () {
+  return `/catalog/laptop/${this._id}`;
 });
 
 module.exports = mongoose.model("Laptop", LaptopSchema);

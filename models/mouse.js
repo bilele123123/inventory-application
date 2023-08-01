@@ -10,8 +10,8 @@ const MouseSchema = new Schema({
   url: { type: String },
 });
 
-MouseSchema.virtual("url").get(function () {
-  return "/mouse/" + this._id; 
+MouseSchema.virtual("mouseUrl").get(function () {
+  return `/catalog/mouse/${this._id}`;
 });
 
 module.exports = mongoose.model("Mouse", MouseSchema);

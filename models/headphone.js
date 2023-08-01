@@ -10,8 +10,8 @@ const HeadphoneSchema = new Schema({
   url: { type: String },
 });
 
-HeadphoneSchema.virtual("url").get(function () {
-  return "/headphone/" + this._id; 
+HeadphoneSchema.virtual("headphoneUrl").get(function () {
+  return `/catalog/headphone/${this._id}`;
 });
 
 module.exports = mongoose.model("Headphone", HeadphoneSchema);

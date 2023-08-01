@@ -10,8 +10,8 @@ const KeyboardSchema = new Schema({
   url: { type: String },
 });
 
-KeyboardSchema.virtual("url").get(function () {
-  return "/keyboard/" + this._id; 
+KeyboardSchema.virtual("keyboardUrl").get(function () {
+  return `/catalog/keyboard/${this._id}`;
 });
 
 module.exports = mongoose.model("Keyboard", KeyboardSchema);

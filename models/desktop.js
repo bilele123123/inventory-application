@@ -10,8 +10,8 @@ const DesktopSchema = new Schema({
   url: { type: String },
 });
 
-DesktopSchema.virtual("url").get(function () {
-  return "/desktop/" + this._id; 
+DesktopSchema.virtual("desktopUrl").get(function () {
+  return `/catalog/desktop/${this._id}`;
 });
 
 module.exports = mongoose.model("Desktop", DesktopSchema);
