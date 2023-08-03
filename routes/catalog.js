@@ -38,100 +38,134 @@ router.get("/category/:id", categoryController.category_detail);
 // GET request for list of all category items.
 router.get("/category", categoryController.category_list);
 
-/// AUTHOR ROUTES ///
+/// DESKTOP ROUTES ///
 
-// GET request for creating Author. NOTE This must come before route for id (i.e. display author).
-router.get("/author/create", author_controller.author_create_get);
+// GET request for creating desktop. NOTE This must come before route for id (i.e. display desktop).
+router.get("/desktop/create", desktopController.desktop_create_get);
 
-// POST request for creating Author.
-router.post("/author/create", author_controller.author_create_post);
+// POST request for creating desktop.
+router.post("/desktop/create", desktopController.desktop_create_post);
 
-// GET request to delete Author.
-router.get("/author/:id/delete", author_controller.author_delete_get);
+// GET request to delete desktop.
+router.get("/desktop/:id/delete", desktopController.desktop_delete_get);
 
-// POST request to delete Author.
-router.post("/author/:id/delete", author_controller.author_delete_post);
+// POST request to delete desktop.
+router.post("/desktop/:id/delete", desktopController.desktop_delete_post);
 
-// GET request to update Author.
-router.get("/author/:id/update", author_controller.author_update_get);
+// GET request to update desktop.
+router.get("/desktop/:id/update", desktopController.desktop_update_get);
 
-// POST request to update Author.
-router.post("/author/:id/update", author_controller.author_update_post);
+// POST request to update desktop.
+router.post("/desktop/:id/update", desktopController.desktop_update_post);
 
-// GET request for one Author.
-router.get("/author/:id", author_controller.author_detail);
+// GET request for one desktop.
+router.get("/desktop/:id", desktopController.desktop_detail);
 
-// GET request for list of all Authors.
-router.get("/authors", author_controller.author_list);
+// GET request for list of all desktops.
+router.get("/desktops", desktopController.desktop_list);
 
-/// GENRE ROUTES ///
+/// HEADPHONE ROUTES ///
 
-// GET request for creating a Genre. NOTE This must come before route that displays Genre (uses id).
-router.get("/genre/create", genre_controller.genre_create_get);
+// GET request for creating a headphone. NOTE This must come before route that displays headphone (uses id).
+router.get("/headphone/create", headphoneController.headphone_create_get);
 
-//POST request for creating Genre.
-router.post("/genre/create", genre_controller.genre_create_post);
+//POST request for creating headphone.
+router.post("/headphone/create", headphoneController.headphone_create_post);
 
-// GET request to delete Genre.
-router.get("/genre/:id/delete", genre_controller.genre_delete_get);
+// GET request to delete headphone.
+router.get("/headphone/:id/delete", headphoneController.headphone_delete_get);
 
-// POST request to delete Genre.
-router.post("/genre/:id/delete", genre_controller.genre_delete_post);
+// POST request to delete headphone.
+router.post("/headphone/:id/delete", headphoneController.headphone_delete_post);
 
-// GET request to update Genre.
-router.get("/genre/:id/update", genre_controller.genre_update_get);
+// GET request to update headphone.
+router.get("/headphone/:id/update", headphoneController.headphone_update_get);
 
-// POST request to update Genre.
-router.post("/genre/:id/update", genre_controller.genre_update_post);
+// POST request to update headphone.
+router.post("/headphone/:id/update", headphoneController.headphone_update_post);
 
-// GET request for one Genre.
-router.get("/genre/:id", genre_controller.genre_detail);
+// GET request for one headphone.
+router.get("/headphone/:id", headphoneController.headphone_detail);
 
-// GET request for list of all Genre.
-router.get("/genres", genre_controller.genre_list);
+// GET request for list of all headphone.
+router.get("/headphones", headphoneController.headphone_list);
 
-/// BOOKINSTANCE ROUTES ///
+/// keyboard ROUTES ///
 
-// GET request for creating a BookInstance. NOTE This must come before route that displays BookInstance (uses id).
-router.get(
-  "/bookinstance/create",
-  book_instance_controller.bookinstance_create_get,
-);
+// GET request for creating a keyboard. NOTE This must come before route that displays keyboard (uses id).
+router.get("/keyboard/create", keyboardController.keyboard_create_get);
 
-// POST request for creating BookInstance.
-router.post(
-  "/bookinstance/create",
-  book_instance_controller.bookinstance_create_post,
-);
+//POST request for creating keyboard.
+router.post("/keyboard/create", keyboardController.keyboard_create_post);
 
-// GET request to delete BookInstance.
-router.get(
-  "/bookinstance/:id/delete",
-  book_instance_controller.bookinstance_delete_get,
-);
+// GET request to delete keyboard.
+router.get("/keyboard/:id/delete", keyboardController.keyboard_delete_get);
 
-// POST request to delete BookInstance.
-router.post(
-  "/bookinstance/:id/delete",
-  book_instance_controller.bookinstance_delete_post,
-);
+// POST request to delete keyboard.
+router.post("/keyboard/:id/delete", keyboardController.keyboard_delete_post);
 
-// GET request to update BookInstance.
-router.get(
-  "/bookinstance/:id/update",
-  book_instance_controller.bookinstance_update_get,
-);
+// GET request to update keyboard.
+router.get("/keyboard/:id/update", keyboardController.keyboard_update_get);
 
-// POST request to update BookInstance.
-router.post(
-  "/bookinstance/:id/update",
-  book_instance_controller.bookinstance_update_post,
-);
+// POST request to update keyboard.
+router.post("/keyboard/:id/update", keyboardController.keyboard_update_post);
 
-// GET request for one BookInstance.
-router.get("/bookinstance/:id", book_instance_controller.bookinstance_detail);
+// GET request for one keyboard.
+router.get("/keyboard/:id", keyboardController.keyboard_detail);
 
-// GET request for list of all BookInstance.
-router.get("/bookinstances", book_instance_controller.bookinstance_list);
+// GET request for list of all keyboard.
+router.get("/keyboards", keyboardController.keyboard_list);
+
+/// laptop ROUTES ///
+
+// GET request for creating a laptop. NOTE This must come before route that displays laptop (uses id).
+router.get("/laptop/create", laptopController.laptop_create_get);
+
+//POST request for creating laptop.
+router.post("/laptop/create", laptopController.laptop_create_post);
+
+// GET request to delete laptop.
+router.get("/laptop/:id/delete", laptopController.laptop_delete_get);
+
+// POST request to delete laptop.
+router.post("/laptop/:id/delete", laptopController.laptop_delete_post);
+
+// GET request to update laptop.
+router.get("/laptop/:id/update", laptopController.laptop_update_get);
+
+// POST request to update laptop.
+router.post("/laptop/:id/update", laptopController.laptop_update_post);
+
+// GET request for one laptop.
+router.get("/laptop/:id", laptopController.laptop_detail);
+
+// GET request for list of all laptop.
+router.get("/laptops", laptopController.laptop_list);
+
+/// MOUSE ROUTES ///
+
+// GET request for creating a mouse. NOTE This must come before route that displays mouse (uses id).
+router.get("/mouse/create", mouseController.mouse_create_get);
+
+//POST request for creating mouse.
+router.post("/mouse/create", mouseController.mouse_create_post);
+
+// GET request to delete mouse.
+router.get("/mouse/:id/delete", mouseController.mouse_delete_get);
+
+// POST request to delete mouse.
+router.post("/mouse/:id/delete", mouseController.mouse_delete_post);
+
+// GET request to update mouse.
+router.get("/mouse/:id/update", mouseController.mouse_update_get);
+
+// POST request to update mouse.
+router.post("/mouse/:id/update", mouseController.mouse_update_post);
+
+// GET request for one mouse.
+router.get("/mouse/:id", mouseController.mouse_detail);
+
+// GET request for list of all mouse.
+router.get("/mouses", mouseController.mouse_list);
 
 module.exports = router;
