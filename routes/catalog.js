@@ -12,7 +12,7 @@ const mouseController = require("../controllers/mouseController");
 /// CATEGORY ROUTES ///
 
 // GET catalog home page.
-router.get("/", categoryController.index);
+router.get("/", categoryController.category_list);
 
 // GET request for creating a category. NOTE This must come before routes that display category (uses id).
 router.get("/category/create", categoryController.category_create_get);
@@ -34,9 +34,6 @@ router.post("/category/:id/update", categoryController.category_update_post);
 
 // GET request for one category.
 router.get("/category/:id", categoryController.category_detail);
-
-// GET request for list of all category items.
-router.get("/category", categoryController.category_list);
 
 /// DESKTOP ROUTES ///
 
@@ -61,15 +58,12 @@ router.post("/desktop/:id/update", desktopController.desktop_update_post);
 // GET request for one desktop.
 router.get("/desktop/:id", desktopController.desktop_detail);
 
-// GET request for list of all desktops.
-router.get("/desktops", desktopController.desktop_list);
-
 /// HEADPHONE ROUTES ///
 
 // GET request for creating a headphone. NOTE This must come before route that displays headphone (uses id).
 router.get("/headphone/create", headphoneController.headphone_create_get);
 
-//POST request for creating headphone.
+// POST request for creating headphone.
 router.post("/headphone/create", headphoneController.headphone_create_post);
 
 // GET request to delete headphone.
@@ -87,15 +81,12 @@ router.post("/headphone/:id/update", headphoneController.headphone_update_post);
 // GET request for one headphone.
 router.get("/headphone/:id", headphoneController.headphone_detail);
 
-// GET request for list of all headphone.
-router.get("/headphones", headphoneController.headphone_list);
-
-/// keyboard ROUTES ///
+/// KEYBOARD ROUTES ///
 
 // GET request for creating a keyboard. NOTE This must come before route that displays keyboard (uses id).
 router.get("/keyboard/create", keyboardController.keyboard_create_get);
 
-//POST request for creating keyboard.
+// POST request for creating keyboard.
 router.post("/keyboard/create", keyboardController.keyboard_create_post);
 
 // GET request to delete keyboard.
@@ -113,15 +104,12 @@ router.post("/keyboard/:id/update", keyboardController.keyboard_update_post);
 // GET request for one keyboard.
 router.get("/keyboard/:id", keyboardController.keyboard_detail);
 
-// GET request for list of all keyboard.
-router.get("/keyboards", keyboardController.keyboard_list);
-
-/// laptop ROUTES ///
+/// LAPTOP ROUTES ///
 
 // GET request for creating a laptop. NOTE This must come before route that displays laptop (uses id).
 router.get("/laptop/create", laptopController.laptop_create_get);
 
-//POST request for creating laptop.
+// POST request for creating laptop.
 router.post("/laptop/create", laptopController.laptop_create_post);
 
 // GET request to delete laptop.
@@ -139,15 +127,12 @@ router.post("/laptop/:id/update", laptopController.laptop_update_post);
 // GET request for one laptop.
 router.get("/laptop/:id", laptopController.laptop_detail);
 
-// GET request for list of all laptop.
-router.get("/laptops", laptopController.laptop_list);
-
 /// MOUSE ROUTES ///
 
 // GET request for creating a mouse. NOTE This must come before route that displays mouse (uses id).
 router.get("/mouse/create", mouseController.mouse_create_get);
 
-//POST request for creating mouse.
+// POST request for creating mouse.
 router.post("/mouse/create", mouseController.mouse_create_post);
 
 // GET request to delete mouse.
@@ -164,8 +149,5 @@ router.post("/mouse/:id/update", mouseController.mouse_update_post);
 
 // GET request for one mouse.
 router.get("/mouse/:id", mouseController.mouse_detail);
-
-// GET request for list of all mouse.
-router.get("/mouses", mouseController.mouse_list);
 
 module.exports = router;
