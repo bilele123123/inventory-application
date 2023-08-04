@@ -2,9 +2,15 @@ extends layout
 
 block content
   h1= title
-  p Welcome to Amazon Lite, a very basic Express website that features tech products.
+  p Welcome to Inventory Application.
 
-  h1 Dynamic Content 
+  h1 Dynamic content
 
-  p The library has the following record counts: 
+  p The inventory has the following record counts:
 
+  ul
+    li #[strong Desktop:] !{desktop_count}
+    li #[strong Headphone:] !{headphone_count}
+    li #[strong Keyboard:] !{keyboard_count}
+    li #[strong Laptop:] !{laptop_count}
+    li #[strong Mouse:] !{mouse_count}
