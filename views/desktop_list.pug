@@ -1,0 +1,12 @@
+extends layout
+
+block content
+  h1= title
+
+  ul
+    each desktop in desktop_list
+      li
+        a(href=desktop.url) #{desktop.model}
+
+    else
+      li There are no desktop.

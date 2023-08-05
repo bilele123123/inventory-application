@@ -4,7 +4,12 @@ const asyncHandler = require("express-async-handler");
 
 // Display list of all Categories.
 exports.desktop_list = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: desktop list");
+  const allDesktop = await Desktop.find({}, "brand model")
+    .sort({ brand: 1})
+    .populate("model")
+    .exec();
+
+  res.render("desktop_list", { title: "Desktop List", desktop_list: allDesktop });
 });
 
 // Display detail page for a specific desktop.

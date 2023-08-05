@@ -13,6 +13,7 @@ const mouseController = require("../controllers/mouseController");
 
 // GET catalog home page.
 router.get("/", categoryController.category_list);
+router.get("/category", categoryController.category_list);
 
 // GET request for creating a category. NOTE This must come before routes that display category (uses id).
 router.get("/category/create", categoryController.category_create_get);
@@ -38,6 +39,8 @@ router.get("/category/:id", categoryController.category_detail);
 /// DESKTOP ROUTES ///
 
 // GET request for creating desktop. NOTE This must come before route for id (i.e. display desktop).
+router.get("/desktop", desktopController.desktop_list);
+
 router.get("/desktop/create", desktopController.desktop_create_get);
 
 // POST request for creating desktop.
