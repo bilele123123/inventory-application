@@ -64,6 +64,8 @@ router.get("/desktop/:id", desktopController.desktop_detail);
 /// HEADPHONE ROUTES ///
 
 // GET request for creating a headphone. NOTE This must come before route that displays headphone (uses id).
+router.get("/headphone", headphoneController.headphone_list);
+
 router.get("/headphone/create", headphoneController.headphone_create_get);
 
 // POST request for creating headphone.
@@ -87,6 +89,8 @@ router.get("/headphone/:id", headphoneController.headphone_detail);
 /// KEYBOARD ROUTES ///
 
 // GET request for creating a keyboard. NOTE This must come before route that displays keyboard (uses id).
+router.get("/keyboard", keyboardController.keyboard_list);
+
 router.get("/keyboard/create", keyboardController.keyboard_create_get);
 
 // POST request for creating keyboard.
@@ -110,6 +114,8 @@ router.get("/keyboard/:id", keyboardController.keyboard_detail);
 /// LAPTOP ROUTES ///
 
 // GET request for creating a laptop. NOTE This must come before route that displays laptop (uses id).
+router.get("/laptop", laptopController.laptop_list);
+
 router.get("/laptop/create", laptopController.laptop_create_get);
 
 // POST request for creating laptop.
@@ -133,6 +139,8 @@ router.get("/laptop/:id", laptopController.laptop_detail);
 /// MOUSE ROUTES ///
 
 // GET request for creating a mouse. NOTE This must come before route that displays mouse (uses id).
+router.get("/mouse", mouseController.mouse_list);
+
 router.get("/mouse/create", mouseController.mouse_create_get);
 
 // POST request for creating mouse.

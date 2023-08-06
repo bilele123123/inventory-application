@@ -1,0 +1,12 @@
+extends layout
+
+block content
+  h1= title
+
+  ul
+    each headphone in headphone_list
+      li
+        a(href=headphone.url) #{headphone.model}
+
+    else
+      li There are no headphone.

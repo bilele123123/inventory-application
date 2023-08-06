@@ -5,7 +5,7 @@ const asyncHandler = require("express-async-handler");
 // Display list of all Categories.
 exports.desktop_list = asyncHandler(async (req, res, next) => {
   const allDesktop = await Desktop.find({}, "brand model")
-    .sort({ brand: 1})
+    .sort({ brand: 1 })
     .populate("model")
     .exec();
 

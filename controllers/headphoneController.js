@@ -2,9 +2,14 @@ const { body, validationResult } = require("express-validator");
 const Headphone = require("../models/headphone");
 const asyncHandler = require("express-async-handler");
 
-// Display list of all Categories.
+// Display list of all Headphones.
 exports.headphone_list = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: headphone list");
+  const allHeadphone = await Headphone.find({}, "brand model")
+    .sort({ brand: 1 })
+    .populate("model")
+    .exec();
+
+  res.render("headphone_list", { title: "Headphone List", headphone_list: allHeadphone });
 });
 
 // Display detail page for a specific headphone.
