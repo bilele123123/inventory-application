@@ -2,9 +2,14 @@ const { body, validationResult } = require("express-validator");
 const Laptop = require("../models/laptop");
 const asyncHandler = require("express-async-handler");
 
-// Display list of all Categories.
+// Display list of all Laptop.
 exports.laptop_list = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: laptop list");
+  const allLaptop = await Laptop.find({}, "brand model")
+    .sort({ brand: 1 })
+    .populate("model")
+    .exec();
+
+  res.render("laptop_list", { title: "Laptop List", laptop_list: allLaptop });
 });
 
 // Display detail page for a specific laptop.

@@ -1,0 +1,12 @@
+extends layout
+
+block content
+  h1= title
+
+  ul
+    each mouse in mouse_list
+      li
+        a(href=mouse.url) #{mouse.model}
+
+    else
+      li There are no mouse.

@@ -2,9 +2,14 @@ const { body, validationResult } = require("express-validator");
 const Keyboard = require("../models/keyboard");
 const asyncHandler = require("express-async-handler");
 
-// Display list of all Categories.
+// Display list of all Keyboard.
 exports.keyboard_list = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: keyboard list");
+  const allKeyboard = await Keyboard.find({}, "brand model")
+    .sort({ brand: 1 })
+    .populate("model")
+    .exec();
+
+  res.render("keyboard_list", { title: "Keyboard List", keyboard_list: allKeyboard });
 });
 
 // Display detail page for a specific keyboard.

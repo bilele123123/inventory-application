@@ -2,9 +2,14 @@ const { body, validationResult } = require("express-validator");
 const Mouse = require("../models/mouse");
 const asyncHandler = require("express-async-handler");
 
-// Display list of all Categories.
+// Display list of all Mouse.
 exports.mouse_list = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: mouse list");
+  const allMouse = await Mouse.find({}, "brand model")
+    .sort({ brand: 1 })
+    .populate("model")
+    .exec();
+
+  res.render("mouse_list", { title: "Mouse List", mouse_list: allMouse });
 });
 
 // Display detail page for a specific mouse.
