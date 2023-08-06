@@ -6,7 +6,7 @@ block content
   ul
     each headphone in headphone_list
       li
-        a(href=headphone.url)
+        a(href=headphone.headphoneUrl)
           strong= headphone.model
           |  (Number in Stock: 
           span(class=headphone.numberInStock > 0 ? 'green' : 'red')

@@ -6,7 +6,7 @@ block content
   ul
     each keyboard in keyboard_list
       li
-        a(href=keyboard.url)
+        a(href=keyboard.keyboardUrl)
           strong= keyboard.model
           |  (Number in Stock: 
           span(class=keyboard.numberInStock > 0 ? 'green' : 'red')

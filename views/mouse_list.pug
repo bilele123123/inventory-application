@@ -6,7 +6,7 @@ block content
   ul
     each mouse in mouse_list
       li
-        a(href=mouse.url)
+        a(href=mouse.mouseUrl)
           strong= mouse.model
           |  (Number in Stock: 
           span(class=mouse.numberInStock > 0 ? 'green' : 'red')

@@ -6,7 +6,7 @@ block content
   ul
     each laptop in laptop_list
       li
-        a(href=laptop.url)
+        a(href=laptop.laptopUrl)
           strong= laptop.model
           |  (Number in Stock: 
           span(class=laptop.numberInStock > 0 ? 'green' : 'red')
