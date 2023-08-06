@@ -4,7 +4,7 @@ const asyncHandler = require("express-async-handler");
 
 // Display list of all Headphones.
 exports.headphone_list = asyncHandler(async (req, res, next) => {
-  const allHeadphone = await Headphone.find({}, "brand model")
+  const allHeadphone = await Headphone.find({}, "brand model numberInStock")
     .sort({ brand: 1 })
     .populate("model")
     .exec();

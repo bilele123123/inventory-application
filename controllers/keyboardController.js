@@ -4,7 +4,7 @@ const asyncHandler = require("express-async-handler");
 
 // Display list of all Keyboard.
 exports.keyboard_list = asyncHandler(async (req, res, next) => {
-  const allKeyboard = await Keyboard.find({}, "brand model")
+  const allKeyboard = await Keyboard.find({}, "brand model numberInStock")
     .sort({ brand: 1 })
     .populate("model")
     .exec();

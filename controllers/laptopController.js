@@ -4,7 +4,7 @@ const asyncHandler = require("express-async-handler");
 
 // Display list of all Laptop.
 exports.laptop_list = asyncHandler(async (req, res, next) => {
-  const allLaptop = await Laptop.find({}, "brand model")
+  const allLaptop = await Laptop.find({}, "brand model numberInStock")
     .sort({ brand: 1 })
     .populate("model")
     .exec();

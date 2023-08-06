@@ -4,7 +4,7 @@ const asyncHandler = require("express-async-handler");
 
 // Display list of all Mouse.
 exports.mouse_list = asyncHandler(async (req, res, next) => {
-  const allMouse = await Mouse.find({}, "brand model")
+  const allMouse = await Mouse.find({}, "brand model numberInStock")
     .sort({ brand: 1 })
     .populate("model")
     .exec();
