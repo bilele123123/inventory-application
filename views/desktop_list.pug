@@ -10,7 +10,7 @@ block content
           strong= desktop.model
           |  (Number in Stock: 
           span(class=desktop.numberInStock > 0 ? 'green' : 'red')
-            |  #{desktop.numberInStock}
-            | )
+            strong #{desktop.numberInStock}
+          | )
     else
       li There are no desktop.
