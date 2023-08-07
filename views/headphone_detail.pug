@@ -7,4 +7,6 @@ block content
 
     h2 Brand: #{headphone.brand}
     h3 Description: #{headphone.description} 
-    h4 Number in Stock: #{headphone.numberInStock}
+    h4 Number in Stock: 
+        span(class=headphone.numberInStock > 0 ? 'green' : 'red')
+            strong #{headphone.numberInStock}

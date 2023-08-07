@@ -1,0 +1,12 @@
+extends layout
+
+block content
+  h1 #{keyboard.model}
+
+  div(style='margin-left:20px;margin-top:20px')
+
+    h2 Brand: #{keyboard.brand}
+    h3 Description: #{keyboard.description} 
+    h4 Number in Stock: 
+        span(class=keyboard.numberInStock > 0 ? 'green' : 'red')
+            strong #{keyboard.numberInStock}

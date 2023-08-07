@@ -14,7 +14,25 @@ exports.mouse_list = asyncHandler(async (req, res, next) => {
 
 // Display detail page for a specific mouse.
 exports.mouse_detail = asyncHandler(async (req, res, next) => {
-  res.send(`NOT IMPLEMENTED: mouse detail: ${req.params.id}`);
+  try {
+    const mouse = await Mouse.findById(req.params.id).exec();
+
+    if (!mouse) {
+      const err = new Error("mouse not found");
+      err.status = 404;
+      return next(err);
+    }
+
+    const category_mouse = await Mouse.find({ brand: mouse.brand }).exec();
+
+    res.render("mouse_detail", {
+      title: "mouse Detail",
+      mouse: mouse,
+      category_mouse: category_mouse,
+    });
+  } catch (err) {
+    next(err);
+  }
 });
 
 // Display mouse create form on GET.
