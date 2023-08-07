@@ -4,13 +4,40 @@ const asyncHandler = require("express-async-handler");
 
 // Display list of all Categories.
 exports.desktop_list = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: desktop list");
+  const allDesktop = await Desktop.find({}, "brand model numberInStock")
+    .sort({ brand: 1 })
+    .populate("model")
+    .exec();
+
+  res.render("desktop_list", { title: "Desktop List", desktop_list: allDesktop });
 });
 
 // Display detail page for a specific desktop.
 exports.desktop_detail = asyncHandler(async (req, res, next) => {
-  res.send(`NOT IMPLEMENTED: desktop detail: ${req.params.id}`);
+  try {
+    const [desktop, description] = await Promise.all([
+      Desktop.findById(req.params.id).exec(),
+    ]);
+
+    if (desktop === null) {
+      const err = new Error("Desktop not found");
+      err.status = 404;
+      return next(err);
+    }
+
+    const category_desktop = await Desktop.find({ category: desktop.category }).exec();
+
+    res.render("desktop_detail", {
+      title: "Desktop Detail",
+      desktop: desktop,
+      desktop_description: description,
+      category_desktop: category_desktop,
+    });
+  } catch (err) {
+    next(err);
+  }
 });
+
 
 // Display desktop create form on GET.
 exports.desktop_create_get = asyncHandler(async (req, res, next) => {

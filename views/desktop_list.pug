@@ -1,0 +1,16 @@
+extends layout
+
+block content
+  h1= title
+
+  ul
+    each desktop in desktop_list
+      li
+        a(href=desktop.desktopUrl)
+          strong= desktop.model
+          |  (Number in Stock: 
+          span(class=desktop.numberInStock > 0 ? 'green' : 'red')
+            strong #{desktop.numberInStock}
+          | )
+    else
+      li There are no desktop.

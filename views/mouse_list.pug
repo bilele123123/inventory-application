@@ -1,0 +1,16 @@
+extends layout
+
+block content
+  h1= title
+
+  ul
+    each mouse in mouse_list
+      li
+        a(href=mouse.mouseUrl)
+          strong= mouse.model
+          |  (Number in Stock: 
+          span(class=mouse.numberInStock > 0 ? 'green' : 'red')
+            strong #{mouse.numberInStock}
+          | )
+    else
+      li There are no mouse.

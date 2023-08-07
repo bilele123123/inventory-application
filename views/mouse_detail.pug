@@ -1,0 +1,12 @@
+extends layout
+
+block content
+  h1 #{mouse.model}
+
+  div(style='margin-left:20px;margin-top:20px')
+
+    h2 Brand: #{mouse.brand}
+    h3 Description: #{mouse.description} 
+    h4 Number in Stock: 
+        span(class=mouse.numberInStock > 0 ? 'green' : 'red')
+            strong #{mouse.numberInStock}

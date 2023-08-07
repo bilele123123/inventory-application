@@ -1,0 +1,16 @@
+extends layout
+
+block content
+  h1= title
+
+  ul
+    each keyboard in keyboard_list
+      li
+        a(href=keyboard.keyboardUrl)
+          strong= keyboard.model
+          |  (Number in Stock: 
+          span(class=keyboard.numberInStock > 0 ? 'green' : 'red')
+            strong #{keyboard.numberInStock}
+          | )
+    else
+      li There are no keyboard.

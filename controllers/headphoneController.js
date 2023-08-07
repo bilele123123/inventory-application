@@ -2,14 +2,37 @@ const { body, validationResult } = require("express-validator");
 const Headphone = require("../models/headphone");
 const asyncHandler = require("express-async-handler");
 
-// Display list of all Categories.
+// Display list of all headphone.
 exports.headphone_list = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: headphone list");
+  const allHeadphone = await Headphone.find({}, "brand model numberInStock")
+    .sort({ brand: 1 })
+    .populate("model")
+    .exec();
+
+  res.render("headphone_list", { title: "Headphone List", headphone_list: allHeadphone });
 });
 
 // Display detail page for a specific headphone.
 exports.headphone_detail = asyncHandler(async (req, res, next) => {
-  res.send(`NOT IMPLEMENTED: headphone detail: ${req.params.id}`);
+  try {
+    const headphone = await Headphone.findById(req.params.id).exec();
+
+    if (!headphone) {
+      const err = new Error("Headphone not found");
+      err.status = 404;
+      return next(err);
+    }
+
+    const category_headphone = await Headphone.find({ brand: headphone.brand }).exec();
+
+    res.render("headphone_detail", {
+      title: "Headphone Detail",
+      headphone: headphone,
+      category_headphone: category_headphone,
+    });
+  } catch (err) {
+    next(err);
+  }
 });
 
 // Display headphone create form on GET.
