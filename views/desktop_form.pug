@@ -1,0 +1,32 @@
+extends layout
+
+block content
+  h1 #{title}
+
+  form(method='POST' action='')
+    div.form-group
+      label(for='brand') Brand:
+      input#brand.form-control(type='text', placeholder='Brand' name='brand' value=(desktop ? desktop.brand : ''))
+
+    div.form-group
+      label(for='model') Model:
+      input#model.form-control(type='text', placeholder='Model' name='model' value=(desktop ? desktop.model : ''))
+
+    div.form-group
+      label(for='description') Description:
+      textarea#description.form-control(type='text', placeholder='Description' name='description') #{desktop ? desktop.description : ''}
+
+    div.form-group
+      label(for='price') Price:
+      input#price.form-control(type='number', placeholder='Price' name='price' step='0.01' value=(desktop ? desktop.price : ''))
+
+    div.form-group
+      label(for='numberInStock') Number in Stock:
+      input#numberInStock.form-control(type='number', placeholder='Number in Stock' name='numberInStock' value=(desktop ? desktop.numberInStock : ''))
+
+    button.btn.btn-primary(type='submit') Submit
+
+  if errors
+    ul
+      for error in errors
+        li!= error.msg
