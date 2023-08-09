@@ -44,7 +44,6 @@ exports.desktop_create_get = asyncHandler(async (req, res, next) => {
 });
 
 // Handle Desktop create on POST.
-// Handle Desktop create on POST.
 exports.desktop_create_post = [
   // Validate and sanitize the name, brand, model, description, price, and numberInStock fields.
   body("name", "Desktop name must contain at least 3 characters")
