@@ -10,3 +10,7 @@ block content
     h4 Number in Stock: 
         span(class=keyboard.numberInStock > 0 ? 'green' : 'red')
             strong #{keyboard.numberInStock}
+    hr
+    p
+      a(href=`/catalog/keyboard/${keyboard._id}/delete`) Delete keyboard
+

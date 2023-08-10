@@ -1,0 +1,14 @@
+extends layout
+
+block content
+  h1 Delete Desktop
+
+  if desktop
+    p Do you really want to delete this Desktop?
+
+    form(method='POST' action='')
+      div.form-group
+        input#desktopid.form-control(type='hidden', name='desktopid', required='true', value=desktop._id)
+      button.btn.btn-primary(type='submit') Delete
+  else
+    p Desktop not found.

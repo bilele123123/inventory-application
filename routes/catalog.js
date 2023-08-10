@@ -13,28 +13,9 @@ const mouseController = require("../controllers/mouseController");
 
 // GET catalog home page.
 router.get("/", categoryController.category_list);
+
+// GET request for list of all Category.
 router.get("/category", categoryController.category_list);
-
-// GET request for creating a category. NOTE This must come before routes that display category (uses id).
-router.get("/category/create", categoryController.category_create_get);
-
-// POST request for creating category.
-router.post("/category/create", categoryController.category_create_post);
-
-// GET request to delete category.
-router.get("/category/:id/delete", categoryController.category_delete_get);
-
-// POST request to delete category.
-router.post("/category/:id/delete", categoryController.category_delete_post);
-
-// GET request to update category.
-router.get("/category/:id/update", categoryController.category_update_get);
-
-// POST request to update category.
-router.post("/category/:id/update", categoryController.category_update_post);
-
-// GET request for one category.
-router.get("/category/:id", categoryController.category_detail);
 
 /// DESKTOP ROUTES ///
 

@@ -1,8 +1,9 @@
 const { body, validationResult } = require("express-validator");
 const Keyboard = require("../models/keyboard");
 const asyncHandler = require("express-async-handler");
+const he = require("he");
 
-// Display list of all Keyboard.
+// Display list of all Categories.
 exports.keyboard_list = asyncHandler(async (req, res, next) => {
   const allKeyboard = await Keyboard.find({}, "brand model numberInStock")
     .sort({ brand: 1 })
@@ -15,19 +16,22 @@ exports.keyboard_list = asyncHandler(async (req, res, next) => {
 // Display detail page for a specific keyboard.
 exports.keyboard_detail = asyncHandler(async (req, res, next) => {
   try {
-    const keyboard = await Keyboard.findById(req.params.id).exec();
+    const [keyboard, description] = await Promise.all([
+      Keyboard.findById(req.params.id).exec(),
+    ]);
 
-    if (!keyboard) {
-      const err = new Error("keyboard not found");
+    if (keyboard === null) {
+      const err = new Error("Keyboard not found");
       err.status = 404;
       return next(err);
     }
 
-    const category_keyboard = await Keyboard.find({ brand: keyboard.brand }).exec();
+    const category_keyboard = await Keyboard.find({ category: keyboard.category }).exec();
 
     res.render("keyboard_detail", {
-      title: "keyboard Detail",
+      title: "Keyboard Detail",
       keyboard: keyboard,
+      keyboard_description: description,
       category_keyboard: category_keyboard,
     });
   } catch (err) {
@@ -37,22 +41,91 @@ exports.keyboard_detail = asyncHandler(async (req, res, next) => {
 
 // Display keyboard create form on GET.
 exports.keyboard_create_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: keyboard create GET");
+  res.render("keyboard_form", { title: "Create New Keyboard" });
 });
 
-// Handle keyboard create on POST.
-exports.keyboard_create_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: keyboard create POST");
-});
+// Handle Keyboard create on POST.
+exports.keyboard_create_post = [
+  body("brand", "Enter a valid brand").trim().notEmpty().escape(),
+  body("model", "Enter a valid model").trim().notEmpty().escape(),
+  body("description", "Enter a valid description").trim().notEmpty().escape(),
+  body("price", "Enter a valid price").isFloat({ min: 0 }),
+  body("numberInStock", "Enter a valid number in stock").isInt({ min: 0 }),
 
-// Display keyboard delete form on GET.
+  // Process request after validation and sanitization.
+  asyncHandler(async (req, res, next) => {
+    // Extract the validation errors from a request.
+    const errors = validationResult(req);
+
+    // Create a keyboard object with escaped and trimmed data.
+    const keyboard = new Keyboard({
+      brand: he.decode(req.body.brand),
+      model: he.decode(req.body.model),
+      description: he.decode(req.body.description),
+      price: req.body.price,
+      numberInStock: req.body.numberInStock,
+    });
+
+    if (!errors.isEmpty()) {
+      // There are errors. Render the form again with sanitized values/error messages.
+      res.render("keyboard_form", {
+        title: "Create New Keyboard",
+        keyboard: keyboard,
+        errors: errors.array(),
+      });
+      return;
+    } else {
+      // Data from form is valid.
+      // Check if Keyboard with same name already exists.
+      const keyboardExists = await Keyboard.findOne({ name: req.body.name }).exec();
+      if (keyboardExists) {
+        // Keyboard exists, redirect to the keyboard list.
+        res.redirect("/catalog/keyboard");
+      } else {
+        await keyboard.save();
+        // New keyboard saved. Redirect to the keyboard list.
+        res.redirect("/catalog/keyboard");
+      }
+          }
+  }),
+];
+
+// Display Keyboard delete form on GET.
 exports.keyboard_delete_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: keyboard delete GET");
+  // Get details of keyboard and all their books (in parallel)
+  const [keyboard] = await Promise.all([
+    Keyboard.findById(req.params.id).exec(),
+  ]);
+
+  if (keyboard === null) {
+    // No results.
+    res.redirect("/catalog/keyboard");
+  }
+
+  res.render("keyboard_delete", {
+    title: "Delete Keyboard",
+    keyboard: keyboard,
+  });
 });
 
-// Handle keyboard delete on POST.
+// Handle Keyboard delete on POST.
 exports.keyboard_delete_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: keyboard delete POST");
+  try {
+    // Get details of keyboard
+    const keyboard = await Keyboard.findById(req.params.id).exec();
+
+    if (!keyboard) {
+      // Keyboard not found.
+      res.redirect("/catalog/keyboard");
+      return;
+    }
+
+    // Delete the keyboard object and redirect to the list of keyboards.
+    await Keyboard.findByIdAndRemove(req.params.id);  // Update this line
+    res.redirect("/catalog/keyboard");
+  } catch (err) {
+    return next(err);
+  }
 });
 
 // Display keyboard update form on GET.
