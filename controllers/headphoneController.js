@@ -92,16 +92,43 @@ exports.headphone_create_post = [
   }),
 ];
 
-// Display headphone delete form on GET.
+// Display Headphone delete form on GET.
 exports.headphone_delete_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: headphone delete GET");
+  // Get details of headphone and all their books (in parallel)
+  const [headphone] = await Promise.all([
+    Headphone.findById(req.params.id).exec(),
+  ]);
+
+  if (headphone === null) {
+    // No results.
+    res.redirect("/catalog/headphones");
+  }
+
+  res.render("headphone_delete", {
+    title: "Delete Headphone",
+    headphone: headphone,
+  });
 });
 
-// Handle headphone delete on POST.
+// Handle Headphone delete on POST.
 exports.headphone_delete_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: headphone delete POST");
-});
+  try {
+    // Get details of headphone
+    const headphone = await Headphone.findById(req.params.id).exec();
 
+    if (!headphone) {
+      // Headphone not found.
+      res.redirect("/catalog/headphones");
+      return;
+    }
+
+    // Delete the headphone object and redirect to the list of headphones.
+    await Headphone.findByIdAndRemove(req.body.headphoneid);
+    res.redirect("/catalog/headphones");
+  } catch (err) {
+    return next(err);
+  }
+});
 // Display headphone update form on GET.
 exports.headphone_update_get = asyncHandler(async (req, res, next) => {
   res.send("NOT IMPLEMENTED: headphone update GET");

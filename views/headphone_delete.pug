@@ -1,0 +1,14 @@
+extends layout
+
+block content
+  h1 Delete Headphone
+
+  if headphone
+    p Do you really want to delete this Headphone?
+
+    form(method='POST' action='')
+      div.form-group
+        input#headphoneid.form-control(type='hidden', name='headphoneid', required='true', value=headphone._id)
+      button.btn.btn-primary(type='submit') Delete
+  else
+    p Headphone not found.

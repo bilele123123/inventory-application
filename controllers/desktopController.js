@@ -96,15 +96,44 @@ exports.desktop_create_post = [
 ];
 
 
-// Display desktop delete form on GET.
+// Display Desktop delete form on GET.
 exports.desktop_delete_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: desktop delete GET");
+  // Get details of desktop and all their books (in parallel)
+  const [desktop] = await Promise.all([
+    Desktop.findById(req.params.id).exec(),
+  ]);
+
+  if (desktop === null) {
+    // No results.
+    res.redirect("/catalog/desktops");
+  }
+
+  res.render("desktop_delete", {
+    title: "Delete Desktop",
+    desktop: desktop,
+  });
 });
 
-// Handle desktop delete on POST.
+// Handle Desktop delete on POST.
 exports.desktop_delete_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: desktop delete POST");
+  try {
+    // Get details of desktop
+    const desktop = await Desktop.findById(req.params.id).exec();
+
+    if (!desktop) {
+      // Desktop not found.
+      res.redirect("/catalog/desktops");
+      return;
+    }
+
+    // Delete the desktop object and redirect to the list of desktops.
+    await Desktop.findByIdAndRemove(req.body.desktopid);
+    res.redirect("/catalog/desktops");
+  } catch (err) {
+    return next(err);
+  }
 });
+
 
 // Display desktop update form on GET.
 exports.desktop_update_get = asyncHandler(async (req, res, next) => {

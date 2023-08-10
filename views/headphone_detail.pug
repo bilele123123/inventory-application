@@ -10,3 +10,6 @@ block content
     h4 Number in Stock: 
         span(class=headphone.numberInStock > 0 ? 'green' : 'red')
             strong #{headphone.numberInStock}
+    hr
+    p
+      a(href=`/catalog/headphone/${headphone._id}/delete`) Delete headphone
