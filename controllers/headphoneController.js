@@ -1,8 +1,9 @@
 const { body, validationResult } = require("express-validator");
 const Headphone = require("../models/headphone");
 const asyncHandler = require("express-async-handler");
+const he = require("he");
 
-// Display list of all headphone.
+// Display list of all Categories.
 exports.headphone_list = asyncHandler(async (req, res, next) => {
   const allHeadphone = await Headphone.find({}, "brand model numberInStock")
     .sort({ brand: 1 })
@@ -15,19 +16,22 @@ exports.headphone_list = asyncHandler(async (req, res, next) => {
 // Display detail page for a specific headphone.
 exports.headphone_detail = asyncHandler(async (req, res, next) => {
   try {
-    const headphone = await Headphone.findById(req.params.id).exec();
+    const [headphone, description] = await Promise.all([
+      Headphone.findById(req.params.id).exec(),
+    ]);
 
-    if (!headphone) {
+    if (headphone === null) {
       const err = new Error("Headphone not found");
       err.status = 404;
       return next(err);
     }
 
-    const category_headphone = await Headphone.find({ brand: headphone.brand }).exec();
+    const category_headphone = await Headphone.find({ category: headphone.category }).exec();
 
     res.render("headphone_detail", {
       title: "Headphone Detail",
       headphone: headphone,
+      headphone_description: description,
       category_headphone: category_headphone,
     });
   } catch (err) {
@@ -42,11 +46,6 @@ exports.headphone_create_get = asyncHandler(async (req, res, next) => {
 
 // Handle Headphone create on POST.
 exports.headphone_create_post = [
-  // Validate and sanitize the name, brand, model, description, price, and numberInStock fields.
-  body("name", "Headphone name must contain at least 3 characters")
-    .trim()
-    .isLength({ min: 3 })
-    .escape(),
   body("brand", "Enter a valid brand").trim().notEmpty().escape(),
   body("model", "Enter a valid model").trim().notEmpty().escape(),
   body("description", "Enter a valid description").trim().notEmpty().escape(),
@@ -60,10 +59,9 @@ exports.headphone_create_post = [
 
     // Create a headphone object with escaped and trimmed data.
     const headphone = new Headphone({
-      name: req.body.name,
-      brand: req.body.brand,
-      model: req.body.model,
-      description: req.body.description,
+      brand: he.decode(req.body.brand),
+      model: he.decode(req.body.model),
+      description: he.decode(req.body.description),
       price: req.body.price,
       numberInStock: req.body.numberInStock,
     });
@@ -81,14 +79,14 @@ exports.headphone_create_post = [
       // Check if Headphone with same name already exists.
       const headphoneExists = await Headphone.findOne({ name: req.body.name }).exec();
       if (headphoneExists) {
-        // Headphone exists, redirect to its detail page.
-        res.redirect(headphoneExists.url);
+        // Headphone exists, redirect to the headphone list.
+        res.redirect("/catalog/headphone");
       } else {
         await headphone.save();
-        // New headphone saved. Redirect to headphone detail page.
-        res.redirect(headphone.url);
+        // New headphone saved. Redirect to the headphone list.
+        res.redirect("/catalog/headphone");
       }
-    }
+          }
   }),
 ];
 
@@ -101,7 +99,7 @@ exports.headphone_delete_get = asyncHandler(async (req, res, next) => {
 
   if (headphone === null) {
     // No results.
-    res.redirect("/catalog/headphones");
+    res.redirect("/catalog/headphone");
   }
 
   res.render("headphone_delete", {
@@ -118,17 +116,18 @@ exports.headphone_delete_post = asyncHandler(async (req, res, next) => {
 
     if (!headphone) {
       // Headphone not found.
-      res.redirect("/catalog/headphones");
+      res.redirect("/catalog/headphone");
       return;
     }
 
     // Delete the headphone object and redirect to the list of headphones.
-    await Headphone.findByIdAndRemove(req.body.headphoneid);
-    res.redirect("/catalog/headphones");
+    await Headphone.findByIdAndRemove(req.params.id);  // Update this line
+    res.redirect("/catalog/headphone");
   } catch (err) {
     return next(err);
   }
 });
+
 // Display headphone update form on GET.
 exports.headphone_update_get = asyncHandler(async (req, res, next) => {
   res.send("NOT IMPLEMENTED: headphone update GET");

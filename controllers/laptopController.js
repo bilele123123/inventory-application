@@ -1,8 +1,9 @@
 const { body, validationResult } = require("express-validator");
 const Laptop = require("../models/laptop");
 const asyncHandler = require("express-async-handler");
+const he = require("he");
 
-// Display list of all Laptop.
+// Display list of all Categories.
 exports.laptop_list = asyncHandler(async (req, res, next) => {
   const allLaptop = await Laptop.find({}, "brand model numberInStock")
     .sort({ brand: 1 })
@@ -15,19 +16,22 @@ exports.laptop_list = asyncHandler(async (req, res, next) => {
 // Display detail page for a specific laptop.
 exports.laptop_detail = asyncHandler(async (req, res, next) => {
   try {
-    const laptop = await Laptop.findById(req.params.id).exec();
+    const [laptop, description] = await Promise.all([
+      Laptop.findById(req.params.id).exec(),
+    ]);
 
-    if (!laptop) {
-      const err = new Error("laptop not found");
+    if (laptop === null) {
+      const err = new Error("Laptop not found");
       err.status = 404;
       return next(err);
     }
 
-    const category_laptop = await Laptop.find({ brand: laptop.brand }).exec();
+    const category_laptop = await Laptop.find({ category: laptop.category }).exec();
 
     res.render("laptop_detail", {
-      title: "laptop Detail",
+      title: "Laptop Detail",
       laptop: laptop,
+      laptop_description: description,
       category_laptop: category_laptop,
     });
   } catch (err) {
@@ -42,11 +46,6 @@ exports.laptop_create_get = asyncHandler(async (req, res, next) => {
 
 // Handle Laptop create on POST.
 exports.laptop_create_post = [
-  // Validate and sanitize the name, brand, model, description, price, and numberInStock fields.
-  body("name", "Laptop name must contain at least 3 characters")
-    .trim()
-    .isLength({ min: 3 })
-    .escape(),
   body("brand", "Enter a valid brand").trim().notEmpty().escape(),
   body("model", "Enter a valid model").trim().notEmpty().escape(),
   body("description", "Enter a valid description").trim().notEmpty().escape(),
@@ -60,10 +59,9 @@ exports.laptop_create_post = [
 
     // Create a laptop object with escaped and trimmed data.
     const laptop = new Laptop({
-      name: req.body.name,
-      brand: req.body.brand,
-      model: req.body.model,
-      description: req.body.description,
+      brand: he.decode(req.body.brand),
+      model: he.decode(req.body.model),
+      description: he.decode(req.body.description),
       price: req.body.price,
       numberInStock: req.body.numberInStock,
     });
@@ -81,25 +79,53 @@ exports.laptop_create_post = [
       // Check if Laptop with same name already exists.
       const laptopExists = await Laptop.findOne({ name: req.body.name }).exec();
       if (laptopExists) {
-        // Laptop exists, redirect to its detail page.
-        res.redirect(laptopExists.url);
+        // Laptop exists, redirect to the laptop list.
+        res.redirect("/catalog/laptop");
       } else {
         await laptop.save();
-        // New laptop saved. Redirect to laptop detail page.
-        res.redirect(laptop.url);
+        // New laptop saved. Redirect to the laptop list.
+        res.redirect("/catalog/laptop");
       }
-    }
+          }
   }),
 ];
 
-// Display laptop delete form on GET.
+// Display Laptop delete form on GET.
 exports.laptop_delete_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: laptop delete GET");
+  // Get details of laptop and all their books (in parallel)
+  const [laptop] = await Promise.all([
+    Laptop.findById(req.params.id).exec(),
+  ]);
+
+  if (laptop === null) {
+    // No results.
+    res.redirect("/catalog/laptop");
+  }
+
+  res.render("laptop_delete", {
+    title: "Delete Laptop",
+    laptop: laptop,
+  });
 });
 
-// Handle laptop delete on POST.
+// Handle Laptop delete on POST.
 exports.laptop_delete_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: laptop delete POST");
+  try {
+    // Get details of laptop
+    const laptop = await Laptop.findById(req.params.id).exec();
+
+    if (!laptop) {
+      // Laptop not found.
+      res.redirect("/catalog/laptop");
+      return;
+    }
+
+    // Delete the laptop object and redirect to the list of laptops.
+    await Laptop.findByIdAndRemove(req.params.id);  // Update this line
+    res.redirect("/catalog/laptop");
+  } catch (err) {
+    return next(err);
+  }
 });
 
 // Display laptop update form on GET.

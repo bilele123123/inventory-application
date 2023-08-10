@@ -10,3 +10,7 @@ block content
     h4 Number in Stock: 
         span(class=laptop.numberInStock > 0 ? 'green' : 'red')
             strong #{laptop.numberInStock}
+    hr
+    p
+      a(href=`/catalog/laptop/${laptop._id}/delete`) Delete laptop
+

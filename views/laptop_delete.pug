@@ -1,0 +1,14 @@
+extends layout
+
+block content
+  h1 Delete Laptop
+
+  if laptop
+    p Do you really want to delete this Laptop?
+
+    form(method='POST' action='')
+      div.form-group
+        input#laptopid.form-control(type='hidden', name='laptopid', required='true', value=laptop._id)
+      button.btn.btn-primary(type='submit') Delete
+  else
+    p Laptop not found.

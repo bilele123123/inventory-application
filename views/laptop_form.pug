@@ -3,7 +3,7 @@ extends layout
 block content
   h1 #{title}
 
-  form(method='POST' action='')
+  form(method='POST', action='/catalog/laptop/create')
     div.form-group
       label(for='brand') Brand:
       input#brand.form-control(type='text', placeholder='Brand' name='brand' value=(laptop ? laptop.brand : ''))
@@ -23,6 +23,10 @@ block content
     div.form-group
       label(for='numberInStock') Number in Stock:
       input#numberInStock.form-control(type='number', placeholder='Number in Stock' name='numberInStock' value=(laptop ? laptop.numberInStock : ''))
+
+    div.form-group
+      label(for='name') Laptop Name:
+      input#name.form-control(type='text', placeholder='Laptop Name' name='name' value=(laptop ? laptop.name : ''))
 
     button.btn.btn-primary(type='submit') Submit
 

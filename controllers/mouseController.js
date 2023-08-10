@@ -1,8 +1,9 @@
 const { body, validationResult } = require("express-validator");
 const Mouse = require("../models/mouse");
 const asyncHandler = require("express-async-handler");
+const he = require("he");
 
-// Display list of all Mouse.
+// Display list of all Categories.
 exports.mouse_list = asyncHandler(async (req, res, next) => {
   const allMouse = await Mouse.find({}, "brand model numberInStock")
     .sort({ brand: 1 })
@@ -15,19 +16,22 @@ exports.mouse_list = asyncHandler(async (req, res, next) => {
 // Display detail page for a specific mouse.
 exports.mouse_detail = asyncHandler(async (req, res, next) => {
   try {
-    const mouse = await Mouse.findById(req.params.id).exec();
+    const [mouse, description] = await Promise.all([
+      Mouse.findById(req.params.id).exec(),
+    ]);
 
-    if (!mouse) {
-      const err = new Error("mouse not found");
+    if (mouse === null) {
+      const err = new Error("Mouse not found");
       err.status = 404;
       return next(err);
     }
 
-    const category_mouse = await Mouse.find({ brand: mouse.brand }).exec();
+    const category_mouse = await Mouse.find({ category: mouse.category }).exec();
 
     res.render("mouse_detail", {
-      title: "mouse Detail",
+      title: "Mouse Detail",
       mouse: mouse,
+      mouse_description: description,
       category_mouse: category_mouse,
     });
   } catch (err) {
@@ -42,11 +46,6 @@ exports.mouse_create_get = asyncHandler(async (req, res, next) => {
 
 // Handle Mouse create on POST.
 exports.mouse_create_post = [
-  // Validate and sanitize the name, brand, model, description, price, and numberInStock fields.
-  body("name", "Mouse name must contain at least 3 characters")
-    .trim()
-    .isLength({ min: 3 })
-    .escape(),
   body("brand", "Enter a valid brand").trim().notEmpty().escape(),
   body("model", "Enter a valid model").trim().notEmpty().escape(),
   body("description", "Enter a valid description").trim().notEmpty().escape(),
@@ -60,10 +59,9 @@ exports.mouse_create_post = [
 
     // Create a mouse object with escaped and trimmed data.
     const mouse = new Mouse({
-      name: req.body.name,
-      brand: req.body.brand,
-      model: req.body.model,
-      description: req.body.description,
+      brand: he.decode(req.body.brand),
+      model: he.decode(req.body.model),
+      description: he.decode(req.body.description),
       price: req.body.price,
       numberInStock: req.body.numberInStock,
     });
@@ -81,25 +79,53 @@ exports.mouse_create_post = [
       // Check if Mouse with same name already exists.
       const mouseExists = await Mouse.findOne({ name: req.body.name }).exec();
       if (mouseExists) {
-        // Mouse exists, redirect to its detail page.
-        res.redirect(mouseExists.url);
+        // Mouse exists, redirect to the mouse list.
+        res.redirect("/catalog/mouse");
       } else {
         await mouse.save();
-        // New mouse saved. Redirect to mouse detail page.
-        res.redirect(mouse.url);
+        // New mouse saved. Redirect to the mouse list.
+        res.redirect("/catalog/mouse");
       }
-    }
+          }
   }),
 ];
 
-// Display mouse delete form on GET.
+// Display Mouse delete form on GET.
 exports.mouse_delete_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: mouse delete GET");
+  // Get details of mouse and all their books (in parallel)
+  const [mouse] = await Promise.all([
+    Mouse.findById(req.params.id).exec(),
+  ]);
+
+  if (mouse === null) {
+    // No results.
+    res.redirect("/catalog/mouse");
+  }
+
+  res.render("mouse_delete", {
+    title: "Delete Mouse",
+    mouse: mouse,
+  });
 });
 
-// Handle mouse delete on POST.
+// Handle Mouse delete on POST.
 exports.mouse_delete_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: mouse delete POST");
+  try {
+    // Get details of mouse
+    const mouse = await Mouse.findById(req.params.id).exec();
+
+    if (!mouse) {
+      // Mouse not found.
+      res.redirect("/catalog/mouse");
+      return;
+    }
+
+    // Delete the mouse object and redirect to the list of mouses.
+    await Mouse.findByIdAndRemove(req.params.id);  // Update this line
+    res.redirect("/catalog/mouse");
+  } catch (err) {
+    return next(err);
+  }
 });
 
 // Display mouse update form on GET.

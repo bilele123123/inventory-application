@@ -1,6 +1,7 @@
 const { body, validationResult } = require("express-validator");
 const Desktop = require("../models/desktop");
 const asyncHandler = require("express-async-handler");
+const he = require("he");
 
 // Display list of all Categories.
 exports.desktop_list = asyncHandler(async (req, res, next) => {
@@ -45,11 +46,6 @@ exports.desktop_create_get = asyncHandler(async (req, res, next) => {
 
 // Handle Desktop create on POST.
 exports.desktop_create_post = [
-  // Validate and sanitize the name, brand, model, description, price, and numberInStock fields.
-  body("name", "Desktop name must contain at least 3 characters")
-    .trim()
-    .isLength({ min: 3 })
-    .escape(),
   body("brand", "Enter a valid brand").trim().notEmpty().escape(),
   body("model", "Enter a valid model").trim().notEmpty().escape(),
   body("description", "Enter a valid description").trim().notEmpty().escape(),
@@ -63,10 +59,9 @@ exports.desktop_create_post = [
 
     // Create a desktop object with escaped and trimmed data.
     const desktop = new Desktop({
-      name: req.body.name,
-      brand: req.body.brand,
-      model: req.body.model,
-      description: req.body.description,
+      brand: he.decode(req.body.brand),
+      model: he.decode(req.body.model),
+      description: he.decode(req.body.description),
       price: req.body.price,
       numberInStock: req.body.numberInStock,
     });
@@ -84,17 +79,16 @@ exports.desktop_create_post = [
       // Check if Desktop with same name already exists.
       const desktopExists = await Desktop.findOne({ name: req.body.name }).exec();
       if (desktopExists) {
-        // Desktop exists, redirect to its detail page.
-        res.redirect(desktopExists.url);
+        // Desktop exists, redirect to the desktop list.
+        res.redirect("/catalog/desktop");
       } else {
         await desktop.save();
-        // New desktop saved. Redirect to desktop detail page.
-        res.redirect(desktop.url);
+        // New desktop saved. Redirect to the desktop list.
+        res.redirect("/catalog/desktop");
       }
-    }
+          }
   }),
 ];
-
 
 // Display Desktop delete form on GET.
 exports.desktop_delete_get = asyncHandler(async (req, res, next) => {
@@ -105,7 +99,7 @@ exports.desktop_delete_get = asyncHandler(async (req, res, next) => {
 
   if (desktop === null) {
     // No results.
-    res.redirect("/catalog/desktops");
+    res.redirect("/catalog/desktop");
   }
 
   res.render("desktop_delete", {
@@ -122,13 +116,13 @@ exports.desktop_delete_post = asyncHandler(async (req, res, next) => {
 
     if (!desktop) {
       // Desktop not found.
-      res.redirect("/catalog/desktops");
+      res.redirect("/catalog/desktop");
       return;
     }
 
     // Delete the desktop object and redirect to the list of desktops.
-    await Desktop.findByIdAndRemove(req.body.desktopid);
-    res.redirect("/catalog/desktops");
+    await Desktop.findByIdAndRemove(req.params.id);  // Update this line
+    res.redirect("/catalog/desktop");
   } catch (err) {
     return next(err);
   }
