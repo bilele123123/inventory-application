@@ -52,12 +52,9 @@ exports.headphone_create_post = [
   body("price", "Enter a valid price").isFloat({ min: 0 }),
   body("numberInStock", "Enter a valid number in stock").isInt({ min: 0 }),
 
-  // Process request after validation and sanitization.
   asyncHandler(async (req, res, next) => {
-    // Extract the validation errors from a request.
     const errors = validationResult(req);
 
-    // Create a headphone object with escaped and trimmed data.
     const headphone = new Headphone({
       brand: he.decode(req.body.brand),
       model: he.decode(req.body.model),
@@ -67,7 +64,6 @@ exports.headphone_create_post = [
     });
 
     if (!errors.isEmpty()) {
-      // There are errors. Render the form again with sanitized values/error messages.
       res.render("headphone_form", {
         title: "Create New Headphone",
         headphone: headphone,
@@ -75,18 +71,9 @@ exports.headphone_create_post = [
       });
       return;
     } else {
-      // Data from form is valid.
-      // Check if Headphone with same name already exists.
-      const headphoneExists = await Headphone.findOne({ name: req.body.name }).exec();
-      if (headphoneExists) {
-        // Headphone exists, redirect to the headphone list.
-        res.redirect("/catalog/headphone");
-      } else {
-        await headphone.save();
-        // New headphone saved. Redirect to the headphone list.
-        res.redirect("/catalog/headphone");
-      }
-          }
+      await headphone.save();
+      res.redirect("/catalog/headphone");
+    }
   }),
 ];
 
@@ -139,7 +126,7 @@ exports.headphone_update_get = asyncHandler(async (req, res, next) => {
       return next(err);
     }
 
-    res.render("headphone_form", {
+    res.render("headphone_update_form", {
       title: "Update Headphone",
       headphone: headphone,
     });

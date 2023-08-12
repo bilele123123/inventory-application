@@ -52,12 +52,9 @@ exports.keyboard_create_post = [
   body("price", "Enter a valid price").isFloat({ min: 0 }),
   body("numberInStock", "Enter a valid number in stock").isInt({ min: 0 }),
 
-  // Process request after validation and sanitization.
   asyncHandler(async (req, res, next) => {
-    // Extract the validation errors from a request.
     const errors = validationResult(req);
 
-    // Create a keyboard object with escaped and trimmed data.
     const keyboard = new Keyboard({
       brand: he.decode(req.body.brand),
       model: he.decode(req.body.model),
@@ -67,7 +64,6 @@ exports.keyboard_create_post = [
     });
 
     if (!errors.isEmpty()) {
-      // There are errors. Render the form again with sanitized values/error messages.
       res.render("keyboard_form", {
         title: "Create New Keyboard",
         keyboard: keyboard,
@@ -75,18 +71,9 @@ exports.keyboard_create_post = [
       });
       return;
     } else {
-      // Data from form is valid.
-      // Check if Keyboard with same name already exists.
-      const keyboardExists = await Keyboard.findOne({ name: req.body.name }).exec();
-      if (keyboardExists) {
-        // Keyboard exists, redirect to the keyboard list.
-        res.redirect("/catalog/keyboard");
-      } else {
-        await keyboard.save();
-        // New keyboard saved. Redirect to the keyboard list.
-        res.redirect("/catalog/keyboard");
-      }
-          }
+      await keyboard.save();
+      res.redirect("/catalog/keyboard");
+    }
   }),
 ];
 
@@ -139,7 +126,7 @@ exports.keyboard_update_get = asyncHandler(async (req, res, next) => {
       return next(err);
     }
 
-    res.render("keyboard_form", {
+    res.render("keyboard_update_form", {
       title: "Update Keyboard",
       keyboard: keyboard,
     });

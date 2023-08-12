@@ -52,12 +52,9 @@ exports.desktop_create_post = [
   body("price", "Enter a valid price").isFloat({ min: 0 }),
   body("numberInStock", "Enter a valid number in stock").isInt({ min: 0 }),
 
-  // Process request after validation and sanitization.
   asyncHandler(async (req, res, next) => {
-    // Extract the validation errors from a request.
     const errors = validationResult(req);
 
-    // Create a desktop object with escaped and trimmed data.
     const desktop = new Desktop({
       brand: he.decode(req.body.brand),
       model: he.decode(req.body.model),
@@ -67,7 +64,6 @@ exports.desktop_create_post = [
     });
 
     if (!errors.isEmpty()) {
-      // There are errors. Render the form again with sanitized values/error messages.
       res.render("desktop_form", {
         title: "Create New Desktop",
         desktop: desktop,
@@ -75,18 +71,9 @@ exports.desktop_create_post = [
       });
       return;
     } else {
-      // Data from form is valid.
-      // Check if Desktop with same name already exists.
-      const desktopExists = await Desktop.findOne({ name: req.body.name }).exec();
-      if (desktopExists) {
-        // Desktop exists, redirect to the desktop list.
-        res.redirect("/catalog/desktop");
-      } else {
-        await desktop.save();
-        // New desktop saved. Redirect to the desktop list.
-        res.redirect("/catalog/desktop");
-      }
-          }
+      await desktop.save();
+      res.redirect("/catalog/desktop");
+    }
   }),
 ];
 
@@ -139,7 +126,7 @@ exports.desktop_update_get = asyncHandler(async (req, res, next) => {
       return next(err);
     }
 
-    res.render("desktop_form", {
+    res.render("desktop_update_form", {
       title: "Update Desktop",
       desktop: desktop,
     });

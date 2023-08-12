@@ -3,7 +3,7 @@ extends layout
 block content
   h1 #{title}
 
-  form(method='POST', action='/catalog/laptop/create')
+  form(method='POST', action=`/catalog/laptop/${laptop._id}/update`)
     div.form-group
       label(for='brand') Brand:
       input#brand.form-control(type='text', placeholder='Brand' name='brand' value=(laptop ? laptop.brand : ''))

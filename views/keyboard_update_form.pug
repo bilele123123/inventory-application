@@ -3,7 +3,7 @@ extends layout
 block content
   h1 #{title}
 
-  form(method='POST', action='/catalog/keyboard/create')
+  form(method='POST', action=`/catalog/keyboard/${keyboard._id}/update`)
     div.form-group
       label(for='brand') Brand:
       input#brand.form-control(type='text', placeholder='Brand' name='brand' value=(keyboard ? keyboard.brand : ''))

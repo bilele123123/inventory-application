@@ -52,12 +52,9 @@ exports.laptop_create_post = [
   body("price", "Enter a valid price").isFloat({ min: 0 }),
   body("numberInStock", "Enter a valid number in stock").isInt({ min: 0 }),
 
-  // Process request after validation and sanitization.
   asyncHandler(async (req, res, next) => {
-    // Extract the validation errors from a request.
     const errors = validationResult(req);
 
-    // Create a laptop object with escaped and trimmed data.
     const laptop = new Laptop({
       brand: he.decode(req.body.brand),
       model: he.decode(req.body.model),
@@ -67,7 +64,6 @@ exports.laptop_create_post = [
     });
 
     if (!errors.isEmpty()) {
-      // There are errors. Render the form again with sanitized values/error messages.
       res.render("laptop_form", {
         title: "Create New Laptop",
         laptop: laptop,
@@ -75,18 +71,9 @@ exports.laptop_create_post = [
       });
       return;
     } else {
-      // Data from form is valid.
-      // Check if Laptop with same name already exists.
-      const laptopExists = await Laptop.findOne({ name: req.body.name }).exec();
-      if (laptopExists) {
-        // Laptop exists, redirect to the laptop list.
-        res.redirect("/catalog/laptop");
-      } else {
-        await laptop.save();
-        // New laptop saved. Redirect to the laptop list.
-        res.redirect("/catalog/laptop");
-      }
-          }
+      await laptop.save();
+      res.redirect("/catalog/laptop");
+    }
   }),
 ];
 
@@ -139,7 +126,7 @@ exports.laptop_update_get = asyncHandler(async (req, res, next) => {
       return next(err);
     }
 
-    res.render("laptop_form", {
+    res.render("laptop_update_form", {
       title: "Update Laptop",
       laptop: laptop,
     });
