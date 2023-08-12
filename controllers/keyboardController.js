@@ -130,10 +130,45 @@ exports.keyboard_delete_post = asyncHandler(async (req, res, next) => {
 
 // Display keyboard update form on GET.
 exports.keyboard_update_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: keyboard update GET");
+  try {
+    const keyboard = await Keyboard.findById(req.params.id).exec();
+
+    if (keyboard === null) {
+      const err = new Error("Keyboard not found");
+      err.status = 404;
+      return next(err);
+    }
+
+    res.render("keyboard_form", {
+      title: "Update Keyboard",
+      keyboard: keyboard,
+    });
+  } catch (err) {
+    next(err);
+  }
 });
 
 // Handle keyboard update on POST.
 exports.keyboard_update_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: keyboard update POST");
+  try {
+    const errors = validationResult(req);
+
+    const updatedKeyboard = new Keyboard({
+      brand: he.decode(req.body.brand),
+      model: he.decode(req.body.model),
+      description: he.decode(req.body.description),
+      price: req.body.price,
+      numberInStock: req.body.numberInStock,
+      _id: req.params.id, // Important: Include the keyboard's _id in the updated document
+    });
+
+    if (!errors.isEmpty()) {
+      // Handle validation errors...
+    } else {
+      await Keyboard.findByIdAndUpdate(req.params.id, updatedKeyboard, {});
+      res.redirect("/catalog/keyboard/" + req.params.id);
+    }
+  } catch (err) {
+    next(err);
+  }
 });

@@ -130,10 +130,45 @@ exports.mouse_delete_post = asyncHandler(async (req, res, next) => {
 
 // Display mouse update form on GET.
 exports.mouse_update_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: mouse update GET");
+  try {
+    const mouse = await Mouse.findById(req.params.id).exec();
+
+    if (mouse === null) {
+      const err = new Error("Mouse not found");
+      err.status = 404;
+      return next(err);
+    }
+
+    res.render("mouse_form", {
+      title: "Update Mouse",
+      mouse: mouse,
+    });
+  } catch (err) {
+    next(err);
+  }
 });
 
 // Handle mouse update on POST.
 exports.mouse_update_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: mouse update POST");
+  try {
+    const errors = validationResult(req);
+
+    const updatedMouse = new Mouse({
+      brand: he.decode(req.body.brand),
+      model: he.decode(req.body.model),
+      description: he.decode(req.body.description),
+      price: req.body.price,
+      numberInStock: req.body.numberInStock,
+      _id: req.params.id, // Important: Include the mouse's _id in the updated document
+    });
+
+    if (!errors.isEmpty()) {
+      // Handle validation errors...
+    } else {
+      await Mouse.findByIdAndUpdate(req.params.id, updatedMouse, {});
+      res.redirect("/catalog/mouse/" + req.params.id);
+    }
+  } catch (err) {
+    next(err);
+  }
 });
