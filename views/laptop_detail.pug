@@ -10,6 +10,8 @@ block content
     h4 Number in Stock: 
         span(class=laptop.numberInStock > 0 ? 'green' : 'red')
             strong #{laptop.numberInStock}
+    h4 Price: 
+      span(style='color: green') $#{laptop.price}
     hr
     p
       a(href=`/catalog/laptop/${laptop._id}/delete`) Delete Laptop

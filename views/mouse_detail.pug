@@ -10,6 +10,8 @@ block content
     h4 Number in Stock: 
         span(class=mouse.numberInStock > 0 ? 'green' : 'red')
             strong #{mouse.numberInStock}
+    h4 Price: 
+      span(style='color: green') $#{mouse.price}
     hr
     p
       a(href=`/catalog/mouse/${mouse._id}/delete`) Delete Mouse
