@@ -52,12 +52,9 @@ exports.keyboard_create_post = [
   body("price", "Enter a valid price").isFloat({ min: 0 }),
   body("numberInStock", "Enter a valid number in stock").isInt({ min: 0 }),
 
-  // Process request after validation and sanitization.
   asyncHandler(async (req, res, next) => {
-    // Extract the validation errors from a request.
     const errors = validationResult(req);
 
-    // Create a keyboard object with escaped and trimmed data.
     const keyboard = new Keyboard({
       brand: he.decode(req.body.brand),
       model: he.decode(req.body.model),
@@ -67,7 +64,6 @@ exports.keyboard_create_post = [
     });
 
     if (!errors.isEmpty()) {
-      // There are errors. Render the form again with sanitized values/error messages.
       res.render("keyboard_form", {
         title: "Create New Keyboard",
         keyboard: keyboard,
@@ -75,18 +71,9 @@ exports.keyboard_create_post = [
       });
       return;
     } else {
-      // Data from form is valid.
-      // Check if Keyboard with same name already exists.
-      const keyboardExists = await Keyboard.findOne({ name: req.body.name }).exec();
-      if (keyboardExists) {
-        // Keyboard exists, redirect to the keyboard list.
-        res.redirect("/catalog/keyboard");
-      } else {
-        await keyboard.save();
-        // New keyboard saved. Redirect to the keyboard list.
-        res.redirect("/catalog/keyboard");
-      }
-          }
+      await keyboard.save();
+      res.redirect("/catalog/keyboard");
+    }
   }),
 ];
 
@@ -130,10 +117,45 @@ exports.keyboard_delete_post = asyncHandler(async (req, res, next) => {
 
 // Display keyboard update form on GET.
 exports.keyboard_update_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: keyboard update GET");
+  try {
+    const keyboard = await Keyboard.findById(req.params.id).exec();
+
+    if (keyboard === null) {
+      const err = new Error("Keyboard not found");
+      err.status = 404;
+      return next(err);
+    }
+
+    res.render("keyboard_update_form", {
+      title: "Update Keyboard",
+      keyboard: keyboard,
+    });
+  } catch (err) {
+    next(err);
+  }
 });
 
 // Handle keyboard update on POST.
 exports.keyboard_update_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: keyboard update POST");
+  try {
+    const errors = validationResult(req);
+
+    const updatedKeyboard = new Keyboard({
+      brand: he.decode(req.body.brand),
+      model: he.decode(req.body.model),
+      description: he.decode(req.body.description),
+      price: req.body.price,
+      numberInStock: req.body.numberInStock,
+      _id: req.params.id, // Important: Include the keyboard's _id in the updated document
+    });
+
+    if (!errors.isEmpty()) {
+      // Handle validation errors...
+    } else {
+      await Keyboard.findByIdAndUpdate(req.params.id, updatedKeyboard, {});
+      res.redirect("/catalog/keyboard/" + req.params.id);
+    }
+  } catch (err) {
+    next(err);
+  }
 });

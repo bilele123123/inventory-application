@@ -52,12 +52,9 @@ exports.laptop_create_post = [
   body("price", "Enter a valid price").isFloat({ min: 0 }),
   body("numberInStock", "Enter a valid number in stock").isInt({ min: 0 }),
 
-  // Process request after validation and sanitization.
   asyncHandler(async (req, res, next) => {
-    // Extract the validation errors from a request.
     const errors = validationResult(req);
 
-    // Create a laptop object with escaped and trimmed data.
     const laptop = new Laptop({
       brand: he.decode(req.body.brand),
       model: he.decode(req.body.model),
@@ -67,7 +64,6 @@ exports.laptop_create_post = [
     });
 
     if (!errors.isEmpty()) {
-      // There are errors. Render the form again with sanitized values/error messages.
       res.render("laptop_form", {
         title: "Create New Laptop",
         laptop: laptop,
@@ -75,18 +71,9 @@ exports.laptop_create_post = [
       });
       return;
     } else {
-      // Data from form is valid.
-      // Check if Laptop with same name already exists.
-      const laptopExists = await Laptop.findOne({ name: req.body.name }).exec();
-      if (laptopExists) {
-        // Laptop exists, redirect to the laptop list.
-        res.redirect("/catalog/laptop");
-      } else {
-        await laptop.save();
-        // New laptop saved. Redirect to the laptop list.
-        res.redirect("/catalog/laptop");
-      }
-          }
+      await laptop.save();
+      res.redirect("/catalog/laptop");
+    }
   }),
 ];
 
@@ -130,10 +117,45 @@ exports.laptop_delete_post = asyncHandler(async (req, res, next) => {
 
 // Display laptop update form on GET.
 exports.laptop_update_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: laptop update GET");
+  try {
+    const laptop = await Laptop.findById(req.params.id).exec();
+
+    if (laptop === null) {
+      const err = new Error("Laptop not found");
+      err.status = 404;
+      return next(err);
+    }
+
+    res.render("laptop_update_form", {
+      title: "Update Laptop",
+      laptop: laptop,
+    });
+  } catch (err) {
+    next(err);
+  }
 });
 
 // Handle laptop update on POST.
 exports.laptop_update_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: laptop update POST");
+  try {
+    const errors = validationResult(req);
+
+    const updatedLaptop = new Laptop({
+      brand: he.decode(req.body.brand),
+      model: he.decode(req.body.model),
+      description: he.decode(req.body.description),
+      price: req.body.price,
+      numberInStock: req.body.numberInStock,
+      _id: req.params.id, // Important: Include the laptop's _id in the updated document
+    });
+
+    if (!errors.isEmpty()) {
+      // Handle validation errors...
+    } else {
+      await Laptop.findByIdAndUpdate(req.params.id, updatedLaptop, {});
+      res.redirect("/catalog/laptop/" + req.params.id);
+    }
+  } catch (err) {
+    next(err);
+  }
 });

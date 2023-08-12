@@ -52,12 +52,9 @@ exports.desktop_create_post = [
   body("price", "Enter a valid price").isFloat({ min: 0 }),
   body("numberInStock", "Enter a valid number in stock").isInt({ min: 0 }),
 
-  // Process request after validation and sanitization.
   asyncHandler(async (req, res, next) => {
-    // Extract the validation errors from a request.
     const errors = validationResult(req);
 
-    // Create a desktop object with escaped and trimmed data.
     const desktop = new Desktop({
       brand: he.decode(req.body.brand),
       model: he.decode(req.body.model),
@@ -67,7 +64,6 @@ exports.desktop_create_post = [
     });
 
     if (!errors.isEmpty()) {
-      // There are errors. Render the form again with sanitized values/error messages.
       res.render("desktop_form", {
         title: "Create New Desktop",
         desktop: desktop,
@@ -75,18 +71,9 @@ exports.desktop_create_post = [
       });
       return;
     } else {
-      // Data from form is valid.
-      // Check if Desktop with same name already exists.
-      const desktopExists = await Desktop.findOne({ name: req.body.name }).exec();
-      if (desktopExists) {
-        // Desktop exists, redirect to the desktop list.
-        res.redirect("/catalog/desktop");
-      } else {
-        await desktop.save();
-        // New desktop saved. Redirect to the desktop list.
-        res.redirect("/catalog/desktop");
-      }
-          }
+      await desktop.save();
+      res.redirect("/catalog/desktop");
+    }
   }),
 ];
 
@@ -128,13 +115,47 @@ exports.desktop_delete_post = asyncHandler(async (req, res, next) => {
   }
 });
 
-
 // Display desktop update form on GET.
 exports.desktop_update_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: desktop update GET");
+  try {
+    const desktop = await Desktop.findById(req.params.id).exec();
+
+    if (desktop === null) {
+      const err = new Error("Desktop not found");
+      err.status = 404;
+      return next(err);
+    }
+
+    res.render("desktop_update_form", {
+      title: "Update Desktop",
+      desktop: desktop,
+    });
+  } catch (err) {
+    next(err);
+  }
 });
 
 // Handle desktop update on POST.
 exports.desktop_update_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: desktop update POST");
+  try {
+    const errors = validationResult(req);
+
+    const updatedDesktop = new Desktop({
+      brand: he.decode(req.body.brand),
+      model: he.decode(req.body.model),
+      description: he.decode(req.body.description),
+      price: req.body.price,
+      numberInStock: req.body.numberInStock,
+      _id: req.params.id, // Important: Include the desktop's _id in the updated document
+    });
+
+    if (!errors.isEmpty()) {
+      // Handle validation errors...
+    } else {
+      await Desktop.findByIdAndUpdate(req.params.id, updatedDesktop, {});
+      res.redirect("/catalog/desktop/" + req.params.id);
+    }
+  } catch (err) {
+    next(err);
+  }
 });

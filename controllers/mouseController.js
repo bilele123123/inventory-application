@@ -52,12 +52,9 @@ exports.mouse_create_post = [
   body("price", "Enter a valid price").isFloat({ min: 0 }),
   body("numberInStock", "Enter a valid number in stock").isInt({ min: 0 }),
 
-  // Process request after validation and sanitization.
   asyncHandler(async (req, res, next) => {
-    // Extract the validation errors from a request.
     const errors = validationResult(req);
 
-    // Create a mouse object with escaped and trimmed data.
     const mouse = new Mouse({
       brand: he.decode(req.body.brand),
       model: he.decode(req.body.model),
@@ -67,7 +64,6 @@ exports.mouse_create_post = [
     });
 
     if (!errors.isEmpty()) {
-      // There are errors. Render the form again with sanitized values/error messages.
       res.render("mouse_form", {
         title: "Create New Mouse",
         mouse: mouse,
@@ -75,18 +71,9 @@ exports.mouse_create_post = [
       });
       return;
     } else {
-      // Data from form is valid.
-      // Check if Mouse with same name already exists.
-      const mouseExists = await Mouse.findOne({ name: req.body.name }).exec();
-      if (mouseExists) {
-        // Mouse exists, redirect to the mouse list.
-        res.redirect("/catalog/mouse");
-      } else {
-        await mouse.save();
-        // New mouse saved. Redirect to the mouse list.
-        res.redirect("/catalog/mouse");
-      }
-          }
+      await mouse.save();
+      res.redirect("/catalog/mouse");
+    }
   }),
 ];
 
@@ -130,10 +117,45 @@ exports.mouse_delete_post = asyncHandler(async (req, res, next) => {
 
 // Display mouse update form on GET.
 exports.mouse_update_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: mouse update GET");
+  try {
+    const mouse = await Mouse.findById(req.params.id).exec();
+
+    if (mouse === null) {
+      const err = new Error("Mouse not found");
+      err.status = 404;
+      return next(err);
+    }
+
+    res.render("mouse_update_form", {
+      title: "Update Mouse",
+      mouse: mouse,
+    });
+  } catch (err) {
+    next(err);
+  }
 });
 
 // Handle mouse update on POST.
 exports.mouse_update_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: mouse update POST");
+  try {
+    const errors = validationResult(req);
+
+    const updatedMouse = new Mouse({
+      brand: he.decode(req.body.brand),
+      model: he.decode(req.body.model),
+      description: he.decode(req.body.description),
+      price: req.body.price,
+      numberInStock: req.body.numberInStock,
+      _id: req.params.id, // Important: Include the mouse's _id in the updated document
+    });
+
+    if (!errors.isEmpty()) {
+      // Handle validation errors...
+    } else {
+      await Mouse.findByIdAndUpdate(req.params.id, updatedMouse, {});
+      res.redirect("/catalog/mouse/" + req.params.id);
+    }
+  } catch (err) {
+    next(err);
+  }
 });
