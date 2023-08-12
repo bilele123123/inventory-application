@@ -128,13 +128,47 @@ exports.desktop_delete_post = asyncHandler(async (req, res, next) => {
   }
 });
 
-
 // Display desktop update form on GET.
 exports.desktop_update_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: desktop update GET");
+  try {
+    const desktop = await Desktop.findById(req.params.id).exec();
+
+    if (desktop === null) {
+      const err = new Error("Desktop not found");
+      err.status = 404;
+      return next(err);
+    }
+
+    res.render("desktop_form", {
+      title: "Update Desktop",
+      desktop: desktop,
+    });
+  } catch (err) {
+    next(err);
+  }
 });
 
 // Handle desktop update on POST.
 exports.desktop_update_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: desktop update POST");
+  try {
+    const errors = validationResult(req);
+
+    const updatedDesktop = new Desktop({
+      brand: he.decode(req.body.brand),
+      model: he.decode(req.body.model),
+      description: he.decode(req.body.description),
+      price: req.body.price,
+      numberInStock: req.body.numberInStock,
+      _id: req.params.id, // Important: Include the desktop's _id in the updated document
+    });
+
+    if (!errors.isEmpty()) {
+      // Handle validation errors...
+    } else {
+      await Desktop.findByIdAndUpdate(req.params.id, updatedDesktop, {});
+      res.redirect("/catalog/desktop/" + req.params.id);
+    }
+  } catch (err) {
+    next(err);
+  }
 });

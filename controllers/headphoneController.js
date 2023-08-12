@@ -130,10 +130,45 @@ exports.headphone_delete_post = asyncHandler(async (req, res, next) => {
 
 // Display headphone update form on GET.
 exports.headphone_update_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: headphone update GET");
+  try {
+    const headphone = await Headphone.findById(req.params.id).exec();
+
+    if (headphone === null) {
+      const err = new Error("Headphone not found");
+      err.status = 404;
+      return next(err);
+    }
+
+    res.render("headphone_form", {
+      title: "Update Headphone",
+      headphone: headphone,
+    });
+  } catch (err) {
+    next(err);
+  }
 });
 
 // Handle headphone update on POST.
 exports.headphone_update_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: headphone update POST");
+  try {
+    const errors = validationResult(req);
+
+    const updatedHeadphone = new Headphone({
+      brand: he.decode(req.body.brand),
+      model: he.decode(req.body.model),
+      description: he.decode(req.body.description),
+      price: req.body.price,
+      numberInStock: req.body.numberInStock,
+      _id: req.params.id, // Important: Include the headphone's _id in the updated document
+    });
+
+    if (!errors.isEmpty()) {
+      // Handle validation errors...
+    } else {
+      await Headphone.findByIdAndUpdate(req.params.id, updatedHeadphone, {});
+      res.redirect("/catalog/headphone/" + req.params.id);
+    }
+  } catch (err) {
+    next(err);
+  }
 });
